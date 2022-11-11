@@ -12,7 +12,7 @@ const resolvers = {
       const user = _.find(UserList, { id: Number(id) });
       return user;
     },
-        // all movies
+    // all movies
     movies: () => {
       return MovieList;
     },
@@ -31,6 +31,35 @@ const resolvers = {
         (movie) =>
           movie.yearOfPublication > +2000 && movie.yearOfPublication <= 2010
       );
+    },
+  },
+
+  //mutation
+  Mutation: {
+    createUser: (parent, args) => {
+      const user = args.input;
+      const lastId = UserList[UserList.length - 1].id;
+      user.id = lastId + 1;
+      UserList.push(user);
+      return user;
+    },
+
+    updateUsername: (parent, args) => {
+      const { id, newUsername } = args.input;
+      let userUpdated;
+      UserList.forEach((user) => {
+        if (user.id === Number(id)) {
+          user.username = newUsername;
+          userUpdated = user;
+        }
+      });
+      return userUpdated;
+    },
+
+    deleteUser: (parent, args) => {
+      const id = args.id;
+      _.remove(UserList, (user) => user.id === Number(id));
+      return null;
     },
   },
 };
