@@ -10,6 +10,7 @@ const resolvers = {
     user: (parent, args) => {
       const id = args.id;
       const user = _.find(UserList, { id: Number(id) });
+      // const user = _.find(UserList, { id: id });
       return user;
     },
     // all movies
