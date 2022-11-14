@@ -1,13 +1,15 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import DisplayData from "./components/DisplayData";
-import DisplayMovies from "./components/DisplayMovies";
 function App() {
   return (
     <div className="container">
-      <DisplayData />
-      <hr />
-      <hr />
-      <DisplayMovies />
+      <BrowserRouter>
+        <Routes>
+          <Route />
+          <Route path="/" element={<DisplayData />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }

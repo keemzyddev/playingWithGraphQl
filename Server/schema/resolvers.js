@@ -6,12 +6,18 @@ const resolvers = {
     users: () => {
       return UserList;
     },
-    // single user
+    // single user by Id
     user: (parent, args) => {
       const id = args.id;
       const user = _.find(UserList, { id: Number(id) });
       // const user = _.find(UserList, { id: id });
       return user;
+    },
+    // single user by username
+    userByName: (parent, args) => {
+      const username = args.username;
+      const userByName = _.find(UserList, { username });
+      return userByName;
     },
     // all movies
     movies: () => {
@@ -43,6 +49,21 @@ const resolvers = {
       user.id = lastId + 1;
       UserList.push(user);
       return user;
+    },
+
+    updateUser: (parents, args) => {
+      const { id, newName, newAge, newUsername, newNationality } = args.input;
+      let userUpdated;
+      UserList.forEach((user) => {
+        if (user.id === Number(id)) {
+          user.name = newName;
+          user.age = parseInt(newAge);
+          user.username = newUsername;
+          user.nationality = newNationality;
+          userUpdated = user;
+        }
+      });
+      return userUpdated;
     },
 
     updateUsername: (parent, args) => {

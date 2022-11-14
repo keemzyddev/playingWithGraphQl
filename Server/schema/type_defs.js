@@ -17,10 +17,10 @@ const typeDefs = gql`
     isInTheaters: Boolean!
   }
 
-  
   type Query {
     users: [User!]!
     user(id: ID!): User!
+    userByName(username: String!): User!
     movies: [Movie!]!
     movie(name: String!): Movie!
   }
@@ -32,14 +32,23 @@ const typeDefs = gql`
     nationality: Nationality = BRAZIL
   }
 
-  input updateUsernameInput {
+  input UpdateUserInput {
+    id: ID!
+    newName: String
+    newAge: Int
+    newUsername: String
+    newNationality: Nationality = BRAZIL
+  }
+
+  input UpdateUsernameInput {
     id: ID!
     newUsername: String!
   }
 
   type Mutation {
     createUser(input: CreateUserInput!): User
-    updateUsername(input: updateUsernameInput): User
+    updateUser(input: UpdateUserInput): User
+    updateUsername(input: UpdateUsernameInput): User
     deleteUser(id: ID!): User
   }
 

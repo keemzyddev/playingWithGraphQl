@@ -1,11 +1,16 @@
 import { useQuery, useLazyQuery } from "@apollo/client";
 import { useState } from "react";
-import { GET_USER, GET_USERS } from "../queries/usersQueries";
+import { GET_USER_BY_NAME, GET_USERS } from "../queries/usersQueries";
+import AddUsersForm from "./AddUsersForm";
+import DisplayMovies from "./DisplayMovies";
+import UsersData from "./UsersData";
 
 const DisplayData = () => {
   const [userSearch, setUserSearch] = useState("");
   const { loading, data, error } = useQuery(GET_USERS);
-  const [fetchUser, { data: userData }] = useLazyQuery(GET_USER);
+  const [fetchUser, { data: userData, error: userError }] =
+  useLazyQuery(GET_USER_BY_NAME);
+
 
   if (loading)
     return (
@@ -15,8 +20,13 @@ const DisplayData = () => {
     );
   if (error) return <p>Something Went Wrong....</p>;
   console.log(userData);
+
+  const handleSubmit = () => {};
+
   return (
     <div>
+      <AddUsersForm handleSubmit={handleSubmit} />
+      <hr />
       {!loading && !error && (
         <table className="table table-hover table-bordered table-hover mt-3">
           <thead>
@@ -26,35 +36,33 @@ const DisplayData = () => {
               <th scope="col">Age</th>
               <th scope="col">Username</th>
               <th scope="col">Nationality</th>
+              <th scope="col"></th>
+              <th scope="col"></th>
             </tr>
           </thead>
           {data.users.map((user) => (
-            <tbody key={user.id}>
-              <tr>
-                <th scope="row">{user.id}</th>
-                <td>{user.name}</td>
-                <td>{user.age}</td>
-                <td>{user.username}</td>
-                <td>{user.nationality}</td>
-              </tr>
+            <tbody key={user.id} >
+              <UsersData user={user}/>
             </tbody>
           ))}
         </table>
       )}
+      <hr />
+      <hr />
 
       <div>
         <input
           className="form-control"
           type="text"
-          placeholder="1...."
+          placeholder="batman...."
           onChange={(e) => setUserSearch(e.target.value)}
         />
         <button
-          className="btn btn-primary mt-2"
+          className="btn btn-primary my-3"
           onClick={() => {
             fetchUser({
               variables: {
-                id: userSearch,
+                username: userSearch,
               },
             });
           }}
@@ -64,11 +72,15 @@ const DisplayData = () => {
         <div className="container">
           {userData && (
             <div>
-              <h1>Name: {userData.user.name}</h1>
+              <h1>Name: {userData.userByName.name}</h1>
             </div>
           )}
+          {userError && <h1> Movie does not exist</h1>}
         </div>
       </div>
+      <hr />
+      <hr />
+      <DisplayMovies />
     </div>
   );
 };

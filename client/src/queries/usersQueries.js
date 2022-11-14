@@ -12,11 +12,10 @@ export const GET_USERS = gql`
   }
 `;
 
-export const GET_USER = gql`
-query getUser($userId: ID!) {
-  user(id: $userId) {
+export const GET_USER_BY_NAME = gql`
+query userByName($username: String!) {
+  userByName(username: $username) {
     name
-    age
   }
 }
 `;
