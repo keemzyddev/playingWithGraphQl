@@ -5,7 +5,8 @@ import { GET_MOVIE_BY_NAME, GET_MOVIES } from "../queries/movieQueries";
 const DisplayMovies = () => {
   const [movieSearch, setMovieSearch] = useState("");
   const { loading, data, error } = useQuery(GET_MOVIES);
-  const [fetchMovie, { data: movieData, error: movieError }] = useLazyQuery(GET_MOVIE_BY_NAME);
+  const [fetchMovie, { data: movieData, error: movieError }] =
+    useLazyQuery(GET_MOVIE_BY_NAME);
 
   console.log(movieData);
   if (loading)
@@ -65,9 +66,7 @@ const DisplayMovies = () => {
               <h1>Movie Name: {movieData.movie.name}</h1>
             </div>
           )}
-          {movieError && (
-            <h1> Movie does not exist</h1>
-          )}
+          {movieError && <h1> Movie does not exist</h1>}
         </div>
       </div>
     </div>

@@ -13,9 +13,19 @@ export const GET_USERS = gql`
 `;
 
 export const GET_USER_BY_NAME = gql`
-query userByName($username: String!) {
-  userByName(username: $username) {
-    name
+  query userByName($username: String!) {
+    userByName(username: $username) {
+      name
+    }
   }
-}
+`;
+
+export const GET_USERS_FRAGMENT = gql`
+  fragment GetUserFragment on User {
+    id
+    name
+    age
+    username
+    nationality
+  }
 `;

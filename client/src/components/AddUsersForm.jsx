@@ -4,7 +4,7 @@ import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import { useMutation } from "@apollo/client";
 import { CREATE_USER } from "../mutations/usersMutation";
-import { GET_USERS } from "../queries/usersQueries";
+import { GET_USERS_FRAGMENT } from "../queries/usersQueries";
 
 const AddUsersForm = () => {
   const [show, setShow] = useState(false);
@@ -14,7 +14,20 @@ const AddUsersForm = () => {
   const [nationality, setNationality] = useState("BRAZIL");
 
   const [createUser] = useMutation(CREATE_USER, {
-    refetchQueries: [{ query: GET_USERS }],
+    variables: { input: { name, age: parseInt(age), username, nationality } },
+    update(cache, { data: { createUser } }) {
+      cache.modify({
+        fields: {
+          users(existingUsersRef = []) {
+            const newUserRef = cache.writeFragment({
+              data: createUser,
+              fragment: GET_USERS_FRAGMENT,
+            });
+            return [...existingUsersRef, newUserRef];
+          },
+        },
+      });
+    },
   });
 
   const handleClose = () => setShow(false);
@@ -25,7 +38,7 @@ const AddUsersForm = () => {
     if (name === "" || age === "" || username === "" || nationality === "") {
       alert("Please fill in all fields");
     }
-    createUser({ variables: { input: { name, age: parseInt(age), username, nationality } } });
+    createUser();
   };
 
   return (

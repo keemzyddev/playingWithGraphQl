@@ -4,7 +4,6 @@ import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
 import { DELETE_USER, UPDATE_USER } from "../mutations/usersMutation";
-import { GET_USERS } from "../queries/usersQueries";
 import { useState } from "react";
 
 const UsersData = ({ user }) => {
@@ -16,12 +15,41 @@ const UsersData = ({ user }) => {
 
   const [deleteUser] = useMutation(DELETE_USER, {
     variables: { id: user.id },
-    refetchQueries: [{ query: GET_USERS }],
+
+    //first method of updating after deleting a user
+    // refetchQueries: [{ query: GET_USERS }],
+
+    //Another method of Updating the cache after deleting a user
+    // update(cache, { data: { deleteUser } }) {
+    //   cache.modify({
+    //     fields: {
+    //       users(existingUserRef, { readField }) {
+    //         return existingUserRef.filter(
+    //           (userRef) => user.id !== readField("id", userRef)
+    //         );
+    //       },
+    //     },
+    //   });
+    // },
+    
+    //third method of updating the cache after deleting a user
+    update(cache, { data: { deleteUser } }) {
+      const normalizedId = cache.identify({ id: user.id, __typename: "User" });
+      cache.evict({ id: normalizedId });
+      cache.gc();
+    },
   });
 
   const [updateUser] = useMutation(UPDATE_USER, {
-    
-    refetchQueries: [{ query: GET_USERS }],
+    variables: {
+      input: {
+        id: user.id,
+        newName: name,
+        newAge: parseInt(age),
+        newUsername: username,
+        newNationality: nationality,
+      },
+    },
   });
 
   const handleClose = () => setShow(false);
@@ -29,12 +57,7 @@ const UsersData = ({ user }) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-
-    // if (name === "" || age === "" || username === "" || nationality === "") {
-    //   alert("Please fill in all fields");
-    // }
-    updateUser({ variables: { input: { id: user.id, newName: name, newAge: parseInt(age), newUsername: username, newNationality:nationality } } });
-    // updateUser({  input: { name, age: parseInt(age), username, nationality } });
+    updateUser();
   };
 
   return (
@@ -74,7 +97,7 @@ const UsersData = ({ user }) => {
               />
             </Form.Group>
             <Form.Select aria-label="Default select example">
-              <option value={nationality} onChange={(e) => setNationality(e.target.value)}>
+              <option onChange={(e) => setNationality(e.target.value)}>
                 Nationality
               </option>
               <option value="BRAZIL">BRAZIL</option>
@@ -96,10 +119,7 @@ const UsersData = ({ user }) => {
         <td>{user.username}</td>
         <td>{user.nationality}</td>
         <td className="text-center">
-          <button
-            className="btn btn-dark btn-sm"
-            onClick={handleShow}
-          >
+          <button className="btn btn-dark btn-sm" onClick={handleShow}>
             <FaEdit />
           </button>
         </td>

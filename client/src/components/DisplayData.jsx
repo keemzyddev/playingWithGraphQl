@@ -9,8 +9,7 @@ const DisplayData = () => {
   const [userSearch, setUserSearch] = useState("");
   const { loading, data, error } = useQuery(GET_USERS);
   const [fetchUser, { data: userData, error: userError }] =
-  useLazyQuery(GET_USER_BY_NAME);
-
+    useLazyQuery(GET_USER_BY_NAME);
 
   if (loading)
     return (
@@ -19,7 +18,6 @@ const DisplayData = () => {
       </div>
     );
   if (error) return <p>Something Went Wrong....</p>;
-  console.log(userData);
 
   const handleSubmit = () => {};
 
@@ -41,8 +39,8 @@ const DisplayData = () => {
             </tr>
           </thead>
           {data.users.map((user) => (
-            <tbody key={user.id} >
-              <UsersData user={user}/>
+            <tbody key={user.id}>
+              <UsersData user={user} />
             </tbody>
           ))}
         </table>

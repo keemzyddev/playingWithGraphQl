@@ -15,11 +15,11 @@ export const CREATE_USER = gql`
 export const UPDATE_USER = gql`
   mutation updateUser($input: UpdateUserInput!) {
     updateUser(input: $input) {
-        id
-        name
-        age
-        username
-        nationality
+      id
+      name
+      age
+      username
+      nationality
     }
   }
 `;
